@@ -6,12 +6,12 @@
 
 import * as http from "http";
 import { app } from "../app";
-import { serverPort } from "../config";
+import { config } from "../config";
 
 /**
  * Get port from environment and store in Express.
  */
-const port = normalizePort(process.env.PORT || serverPort);
+const port = normalizePort(process.env.PORT || config.serverPort);
 app.set("port", port);
 
 /**

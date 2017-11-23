@@ -1,47 +1,49 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 import { HttpModule } from '@angular/http';
-import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 import { AppComponent } from './app.component';
 import { routes } from './app.router';
-import { metaReducers, reducers } from './store';
-import { SharedModule } from './shared/shared.module';
-import { WeatherService } from './weather/weather.service';
-import { WeatherEffects } from './store/weather/weather.effects';
-import { FeedEffects } from './store/feed/feed.effects';
-import { ProfileEffects } from './store/profile/profile.effects';
-import { environment } from '../environments/environment';
 import { RouterModule } from '@angular/router';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { BookCreateComponent } from './book/book-create.component';
+import { BookUpdateComponent } from './book/book-update.component';
+import { LoginComponent } from './auth/login.component';
+import { NavHeaderComponent } from './shared/nav.component';
+
+import { ReactiveFormsModule,FormsModule } from '@angular/forms';
+import { BookService } from './services/book.service';
+import { CategoryService } from './services/category.service';
+import { AuthGuard } from './services/auth-guard';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    DashboardComponent,
+    BookCreateComponent,
+    BookUpdateComponent,
+    LoginComponent,
+    NavHeaderComponent
   ],
   imports: [
     BrowserModule,
-    SharedModule,
     FormsModule,
     HttpModule,
-    StoreModule.forRoot(reducers, { metaReducers }),
-    EffectsModule.forRoot([
-      ProfileEffects,
-      FeedEffects,
-      WeatherEffects
-    ]),
-    !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 50 }) : [],
+    FormsModule,
+    ReactiveFormsModule,
     RouterModule.forRoot(
       routes,
       {
-        useHash: true
+        useHash: false
       }
     )
   ],
-  providers: [
-    WeatherService
+  providers:[
+    AuthGuard,
+    BookService,
+    CategoryService,
+    DatePipe
   ],
   bootstrap: [
     AppComponent

@@ -1,0 +1,27 @@
+<div class="row ">
+    <div class="col-lg-3">
+    
+    </div>
+    <div id="login-form-box" class="row flex-items-xs-center col-lg-6">
+            
+        <form class="login-form" [formGroup]="loginForm" (ngSubmit)="login(loginForm)">
+            <div class="row flex-items-xs-center">
+                <h2>Simple Booking System</h2>
+            </div>
+        
+
+            <div class="password-field row row-field">
+                <input class="col-xs-12" formControlName="password" type="password" placeholder="Your password">
+            </div>
+            
+            <div class="login-btn row row-field">
+                <button type="submit"  [disabled]="!loginForm.valid" class="col-xs-12">Log in</button>
+            </div>
+
+            
+        </form>
+    </div>
+    <div class="col-lg-3 ">
+
+    </div>
+</div>

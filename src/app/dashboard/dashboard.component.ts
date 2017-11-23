@@ -1,68 +1,52 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router,ActivatedRouteSnapshot } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
+import { BookService } from './../services/book.service' ;
+import { Book } from './../interfaces/book.interface';
 
-import { FEED_ADD, FEED_REMOVE, FEED_ADD_COMMENT } from '../store/feed/feed.actions';
-import { IAppState } from '../store';
+
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+	selector: 'app-dashboard',
+	templateUrl: './dashboard.component.html',
+	styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent {
-  form: FormGroup;
+export class DashboardComponent implements OnInit {
+	books:Observable<Book[]>;
 
-  feeds$: Observable<{}>;
+	constructor(
+		public fb: FormBuilder,
+		private bookService:BookService,
+		private router:Router
+	
+	) {
 
-  constructor(public fb: FormBuilder, public store: Store<IAppState>) {
 
-    this.feeds$ = store.select('feed');
+	}
+	ngOnInit(){
+		this.books = this.bookService.books;
+		this.bookService.loadBooks();
+		this.bookService.zero_book.subscribe(val=>{
 
-    this.form = fb.group({
-      text: ['', Validators.required],
-      name: ['', Validators.required]
-    });
+			if(val == true){
+				this.router.navigate(['/book/create']);
+			}
+		})
 
-  }
+	
+	}
+	deleteBook(id){
+		if(confirm("Are you sure to remove this book?")){
+			this.bookService.deleteBook(id).subscribe(res =>{
+				
+			
+			});
+		}
+	
+	}
 
-  submitFeed(): void {
 
-    if (this.form.valid) {
-
-      this.store.dispatch({
-        type: FEED_ADD,
-        payload: this.form.value
-      });
-
-      this.form.reset();
-    }
-  }
-
-  submitCommentOnFeed(id: string, commentForm: FormGroup): void {
-
-    if (commentForm.valid) {
-
-      this.store.dispatch({
-        type: FEED_ADD_COMMENT,
-        payload: {
-          id,
-          comment: commentForm.value
-        }
-      });
-
-      commentForm.reset();
-    }
-
-  }
-
-  removeFeed(feed: {}): void {
-
-    this.store.dispatch({
-      type: FEED_REMOVE,
-      payload: feed
-    });
-
-  }
+ 
 }

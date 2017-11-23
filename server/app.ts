@@ -3,26 +3,31 @@ import * as compression from "compression";
 import * as express from "express";
 import * as path from "path";
 
-import { feedRouter } from "./routes/feed";
-import { loginRouter } from "./routes/login";
-import { protectedRouter } from "./routes/protected";
-import { publicRouter } from "./routes/public";
-import { userRouter } from "./routes/user";
+import { loginRouter } from "./routes/auth";
+import { bookRouter } from "./routes/book";
+import { categoryRouter } from "./routes/category";
+
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+//Initialize mongodb
+var db = require('./services/db');
+//Load default categories
+var fixtures = require('./fixtures/category');
+fixtures.loadCategories();
 
 const app: express.Application = express();
 
 app.disable("x-powered-by");
-
+app.use(cookieParser());
+app.use(session({ secret: 'F0B00k1ngs4()KxGaR2Wd^SDt', cookie: { maxAge: 86400000 }}));
 app.use(json());
 app.use(compression());
 app.use(urlencoded({ extended: true }));
 
 // api routes
-app.use("/api/secure", protectedRouter);
-app.use("/api/login", loginRouter);
-app.use("/api/public", publicRouter);
-app.use("/api/feed", feedRouter);
-app.use("/api/user", userRouter);
+app.use("/api/book", bookRouter);
+app.use("/api/category", categoryRouter);
+app.use("/api/auth", loginRouter);
 
 if (app.get("env") === "production") {
 
@@ -35,6 +40,8 @@ app.use((req: express.Request, res: express.Response, next) => {
   const err = new Error("Not Found");
   next(err);
 });
+
+
 
 // production error handler
 // no stacktrace leaked to user
